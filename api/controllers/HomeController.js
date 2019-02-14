@@ -21,6 +21,7 @@ module.exports = {
       }
     }).then(function(st) {
       var account = req.wxAccount || {};
+      console.log(req);
       account.lastCheckin = st[0] || {};
       account.hasSentWish = st[1] || false;
 

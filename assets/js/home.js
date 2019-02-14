@@ -5,7 +5,7 @@
 
   PM.bgm = new PM.BGM($('#bgm-audio'), {
     src: '/audios/pm_bgm2.mp3',
-    autoplay: false
+    autoplay: true,
   });
 
 

@@ -49,7 +49,4 @@ module.exports.policies = {
 		// feed : ['isNiceToAnimals', 'hasRabbitFood']
 	// }
 
-  HomeController: {
-    'index': 'weixinAuth'
-  }
 };
