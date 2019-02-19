@@ -529,7 +529,13 @@
   BGM.prototype.initEvent = function() {
     var self = this;
     this.$audio.on("canplay", function() {
-      return self.$audio.get(0).play();
+      try {
+        return self.$audio.get(0).play()
+      } catch (e) {
+        console.error(e)
+      } finally {
+        return self;
+      }
     }).on("play", function() {
       return self.$btn.addClass("playing");
     }).on("pause", function() {
@@ -547,7 +553,11 @@
   };
 
   BGM.prototype.play = function() {
-    this.$audio.get(0).play();
+    try {
+      this.$audio.get(0).play();
+    } catch (e) {
+      console.error(e)
+    }
   };
 
   BGM.prototype.pause = function() {

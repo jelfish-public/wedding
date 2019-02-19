@@ -1,4 +1,4 @@
-Vue.options.delimiters = ['<%', '%>'];
+// Vue.options.delimiters = ['<%', '%>'];
 Vue.use(VueResource);
 Vue.use(Toasted, {
     theme: "bubble",

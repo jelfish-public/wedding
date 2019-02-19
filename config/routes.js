@@ -34,7 +34,9 @@ module.exports.routes = {
 
   '/': 'HomeController.index',
   '/notweixin': 'HomeController.notweixin',
-  '/wall': 'HomeController.wall'
+  '/wall': 'HomeController.wall',
+
+  '/attdOrNot': 'HomeController.attdOrNot',
 
   /***************************************************************************
   *                                                                          *

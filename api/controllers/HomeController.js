@@ -19,17 +19,53 @@ module.exports = {
       } else {
         return [];
       }
-    }).then(function(st) {
+    }).then(async function(st) {
       var account = req.wxAccount || {};
       console.log(req);
       account.lastCheckin = st[0] || {};
       account.hasSentWish = st[1] || false;
+      var meeting;
+      var person;
+      if (req.query.id) {
+        meeting = await Meeting.find({where: { id: req.query.id }});
+        person = await Participator.find({ where: { id: req.query.tid } });
+      }
+      console.log(meeting);
+      meeting.weddingData = JSON.parse(meeting.wedding_data);
 
       return res.view('homepage', {
         account: account,
-        noAbout: !!req.cookies.noAbout || false
+        noAbout: false,
+        wedding: meeting,
+        person: person,
       });
     });
+  },
+
+  attdOrNot: function(req, res) {
+    console.log(req.body);
+    var param = req.body;
+    var value;
+
+    if (param.attdOrNot) {
+      value = {
+        attend_or_not: 2,
+        attend_num: param.people,
+        vegetarian_or_not: param.isVege,
+        others: param.others,
+      };
+    } else {
+      value = {
+        attend_or_not: 1,
+      };
+    }
+
+    var result = Participator.update(value, { where: { id: req.body.tid } });
+
+    res.json({
+      code: 0,
+      message: 'Success',
+    })
   },
 
   api_checkin: function(req, res) {

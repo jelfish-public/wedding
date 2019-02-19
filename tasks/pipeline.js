@@ -31,9 +31,10 @@ var jsFilesToInject = [
   'js/dependencies/jquery.min.js',
   'js/dependencies/**/*.js',
 
-  'js/pm.js',
   'js/vue-lib/**/*.js',
   'js/vue-install.js',
+  'js/home-vue.js',
+  'js/pm.js',
 
   // All of the rest of your client-side js files
   // will be injected here in no particular order.

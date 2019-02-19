@@ -3,18 +3,14 @@
   <span class="iconfont icon-volumemedium"></span>
 </div>
 
-<div class="container">
+<div class="container" id="app">
   <div class="fullpage" id="pnl-fullpage">
     <div class="slide">
       <section class="main">
         <div class="about-box pull-down <%= noAbout ? 'closed' : 'expand' %>" data-no-about="<%= noAbout %>" id="about-box">
           <h2>关于我们</strong></h2>
           <p>“PM Infinity”是我们的婚礼主题，“P”代表我美丽的妻子，“M”当然就是在下啦；“Infinity”代表无限和永恒，是因为“M”和“P”相识于那一年的3.14，咦，这不刚好是数学里的“π”嘛，于是就借助“π”的无穷，寓意我们之间爱无穷。其实还有个巧合我们的求婚戒和对戒都刻有“Infinity”😊。</p>
-          <% if (account.lastCheckin && account.lastCheckin.status != 'present') { %>
-          <p>“PM Infinity”婚礼将于10月5号晚，在九江市盛世麒麟大酒店举行(可在下方参考现场地图)，我和妻子及双方家人恭候大家的光临。据说签到，送祝福可以参加婚礼现场的抽奖哦😜。</p>
-          <% } else { %>
-          <p style="color:red">可在底部输入框发送祝福弹幕，参与现场抽奖，据说颜值高的和祝福多的都更有机会中奖😜。</p>
-          <% } %>
+          <!--<p> <%= wedding.weddingData.introduction %> </p>-->
           <div class="pull-handler" id="btn-pull-down">
             <div class="rocker">
               <span class="pole"></span>
@@ -34,6 +30,9 @@
             <div><img class="disable-tilt" data-lazy="/images/4-498.jpg" data-width="1500" data-height="1000" data-center-offset="498" /></div>
             <div><img class="disable-tilt" data-lazy="/images/5-1043.jpg" data-width="1500" data-height="1000" data-center-offset="1043" /></div>
             <div><img class="disable-tilt" data-lazy="/images/4-498.jpg" data-width="1500" data-height="1000" data-center-offset="1043" /></div>
+            <% for(var i=0; i < wedding.weddingData.img.length; i++) { %>
+              <div><img class="disable-tilt" data-lazy="//127.0.0.1:8000/uploads/<%= wedding.weddingData.img[i].path %>" data-width="1500" data-height="1000" data-center-offset="1043" /></div>
+            <% } %>
           </div>
         </div>
         <div class="wish-box <%= account.lastCheckin && account.lastCheckin.status == 'present' ? 'dock-show' : 'dock-hide' %>" id="wish-box">
@@ -70,7 +69,12 @@
           <% } %>
           <li>
             <a href="javascript:;" class="weui_btn weui_btn_default" id="btn-map">
-              <i class="iconfont icon-map"></i> 现场地图
+              <i class="iconfont icon-map"></i>
+              <% if (person.attend_or_not === 2) { %>
+                现场地图
+              <% } else { %>
+                補充資料
+              <% } %>
             </a>
           </li>
         </ul>
@@ -99,7 +103,7 @@
         <div class="wish-board" id="wish-board"></div>
         <% } %>
       </section>
-      <section class="map">
+      <section class="map" style="background: #fff;">
         <ul class="button-list">
           <li>
             <a href="javascript:;" class="weui_btn weui_btn_default" id="btn-back">
@@ -107,8 +111,59 @@
             </a>
           </li>
         </ul>
-        <div class="pnl-map" id="pnl-map">
+        <div style="width: 100%;height: 100%;">
+          <div style="width: 100%;height: 30%;display: flex;justify-content: center;">
+            <div class="pnl-map" id="pnl-map" style="width: 60%;height: 100%;"></div>
+          </div>
+          <div>
+            <!--<div class="weui-cells__title">Please fill the table</div>-->
+            <div class="weui-cells weui-cells_form">
+              <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">姓名</label></div>
+                <div class="weui-cell__bd">
+                  <input class="weui-input" type="text" readonly value="<%= person.name %>"/>
+                </div>
+              </div>
+              <div class="weui-cell weui-cell_switch">
+                <div class="weui-cell__bd">是否出席</div>
+                <div class="weui-cell__ft">
+                  <input class="weui-switch" type="checkbox" v-model="attdOrNot" :disabled="iGo"/>
+                </div>
+              </div>
+              <div v-if="attdOrNot">
+                <div class="weui-cell weui-cell_switch">
+                  <div class="weui-cell__bd">是否素食</div>
+                  <div class="weui-cell__ft">
+                    <input class="weui-switch" type="checkbox" v-model="isVege":disabled="iGo"/>
+                  </div>
+                </div>
+                <div class="weui-cell">
+                  <div class="weui-cell__hd"><label class="weui-label">人數</label></div>
+                  <div class="weui-cell__bd">
+                    <input class="weui-input" type="number" pattern="[0-9]*" v-model="people" placeholder="请输入人數":disabled="iGo"/>
+                  </div>
+                </div>
+                <div class="weui-cell">
+                  <div class="weui-cell__hd"><label class="weui-label">其他</label></div>
+                  <div class="weui-cell__bd">
+                    <input class="weui-input" type="text" v-model="others":disabled="iGo"/>
+                  </div>
+                </div>
+              </div>
+              <div v-if="!iGo" class="weui-btn-area">
+                <a class="weui-btn weui-btn_primary" href="javascript:" @click="iDo">确定</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   </div>
 </div>
+<script>
+  var musicSrc = '<%= wedding.weddingData.music.path %>'
+  var tid = <%= person.id %>
+  var isConfirmAttd = <%= person.attend_or_not %> !== 1;
+  var iGo = <%= person.attend_or_not %> > 1;
+  <!--var weddingData = JSON.parse('<%= wedding.wedding_data %>'.replace(/&quot;/g, '"'))-->
+</script>
